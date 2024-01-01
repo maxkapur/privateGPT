@@ -1,4 +1,6 @@
 .venv
+venv/
+*.log
 
 settings-me.yaml
 
