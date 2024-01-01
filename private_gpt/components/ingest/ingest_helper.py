@@ -1,4 +1,5 @@
 import logging
+import zipfile
 from pathlib import Path
 
 from llama_index import Document
@@ -32,9 +33,16 @@ class IngestionHelper:
     def transform_file_into_documents(
         file_name: str, file_data: Path
     ) -> list[Document]:
-        documents = IngestionHelper._load_file_to_documents(file_name, file_data)
-        for document in documents:
-            document.metadata["file_name"] = file_name
+        try:
+            documents = IngestionHelper._load_file_to_documents(file_name, file_data)
+            for document in documents:
+                document.metadata["file_name"] = file_name
+        except zipfile.BadZipFile:
+            logger.warn(
+                "Couldn't convert %s to text; skipping. Is this an encrypted Office file?",
+                file_name
+            )
+            return []
         IngestionHelper._exclude_metadata(documents)
         return documents
 
