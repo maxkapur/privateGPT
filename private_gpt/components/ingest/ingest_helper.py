@@ -43,6 +43,7 @@ class IngestionHelper:
         logger.debug("Transforming file_name=%s into documents", file_name)
         extension = Path(file_name).suffix
         reader_cls = FILE_READER_CLS.get(extension)
+
         if reader_cls is None:
             logger.warn(
                 "No reader found for extension=%s, skipping file %s",
@@ -52,7 +53,11 @@ class IngestionHelper:
             return []
 
         logger.debug("Specific reader found for extension=%s", extension)
-        return reader_cls().load_data(file_data)
+        if reader_cls is StringIterableReader:
+            string_reader = reader_cls()
+            return string_reader.load_data([file_data.read_text()])
+        else:
+            return reader_cls().load_data(file_data)
 
     @staticmethod
     def _exclude_metadata(documents: list[Document]) -> None:

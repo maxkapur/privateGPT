@@ -113,8 +113,6 @@ class SimpleIngestComponent(BaseIngestComponentWithIndex):
         super().__init__(storage_context, service_context, *args, **kwargs)
 
     def ingest(self, file_name: str, file_data: Path) -> list[Document]:
-        # https://github.com/huggingface/transformers/issues/2062
-        file_name = str(file_name)
         logger.info("Ingesting file_name=%s", file_name)
         documents = IngestionHelper.transform_file_into_documents(file_name, file_data)
         logger.info(
@@ -172,8 +170,6 @@ class BatchIngestComponent(BaseIngestComponentWithIndex):
         )
 
     def ingest(self, file_name: str, file_data: Path) -> list[Document]:
-        # https://github.com/huggingface/transformers/issues/2062
-        file_name = str(file_name)
         logger.info("Ingesting file_name=%s", file_name)
         documents = IngestionHelper.transform_file_into_documents(file_name, file_data)
         logger.info(
@@ -255,8 +251,6 @@ class ParallelizedIngestComponent(BaseIngestComponentWithIndex):
         )
 
     def ingest(self, file_name: str, file_data: Path) -> list[Document]:
-        # https://github.com/huggingface/transformers/issues/2062
-        file_name = str(file_name)
         logger.info("Ingesting file_name=%s", file_name)
         # Running in a single (1) process to release the current
         # thread, and take a dedicated CPU core for computation
