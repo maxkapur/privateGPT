@@ -12,6 +12,11 @@ FILE_READER_CLS = DEFAULT_FILE_READER_CLS.copy()
 FILE_READER_CLS.update(
     {
         ".json": JSONReader,
+        ".tex": StringIterableReader,
+        ".txt": StringIterableReader,
+        ".md": StringIterableReader,
+        ".markdown": StringIterableReader,
+        ".html": StringIterableReader,
     }
 )
 
@@ -39,13 +44,12 @@ class IngestionHelper:
         extension = Path(file_name).suffix
         reader_cls = FILE_READER_CLS.get(extension)
         if reader_cls is None:
-            logger.debug(
-                "No reader found for extension=%s, using default string reader",
+            logger.warn(
+                "No reader found for extension=%s, skipping file %s",
                 extension,
+                file_name,
             )
-            # Read as a plain text
-            string_reader = StringIterableReader()
-            return string_reader.load_data([file_data.read_text()])
+            return []
 
         logger.debug("Specific reader found for extension=%s", extension)
         return reader_cls().load_data(file_data)
